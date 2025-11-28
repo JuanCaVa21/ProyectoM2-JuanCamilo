@@ -457,35 +457,35 @@ class DataGenerator:
         # Para poder usar la funcion FIRST_VALUES() se creo la funcion de ventana
         # Creamos una subconsulta trip_windows ya que tenemos funciones de ventana
         self.cursor.execute("""
-            WITH trip_windows AS (
-                SELECT 
+            with trip_windows AS (
+                select 
                     v.vehicle_id,
                     v.vehicle_type,
                     t.trip_id,
                     t.departure_datetime,
                     t.arrival_datetime,
-                    COUNT(t.trip_id) OVER (PARTITION BY v.vehicle_id) AS trip_count, 
-                FIRST_VALUE(t.departure_datetime) OVER (
-                    PARTITION BY v.vehicle_id
-                    ORDER BY t.departure_datetime ASC
-                ) AS first_trip,
-                LAST_VALUE(t.arrival_datetime) OVER (
-                    PARTITION BY v.vehicle_id
-                    ORDER BY t.arrival_datetime DESC
-                ) AS last_trip
-                FROM resources.vehicles v
-                INNER JOIN resources.trips t 
-                ON v.vehicle_id = t.vehicle_id
+                    count(t.trip_id) over (partition by v.vehicle_id) as trip_count, 
+                first_value(t.departure_datetime) over (
+                    partition by v.vehicle_id
+                    order by t.departure_datetime asc
+                ) as first_trip,
+                last_value(t.arrival_datetime) over (
+                    partition by v.vehicle_id
+                    order by t.arrival_datetime desc
+                ) as last_trip
+                from resources.vehicles v
+                inner join resources.trips t 
+                on v.vehicle_id = t.vehicle_id
             )
 
-            SELECT DISTINCT
+            select distinct
                 vehicle_id,
                 vehicle_type,
                 trip_count,
                 first_trip,
                 last_trip
-            FROM trip_windows
-            ORDER BY vehicle_id;
+            from trip_windows
+            order by vehicle_id;
         """)
         vehicle_stats = self.cursor.fetchall()
         
