@@ -1,0 +1,146 @@
+2025-11-27 22:59:23,251 - INFO -  Conexión exitosa a PostgreSQL
+2025-11-27 22:59:23,251 - INFO - Generando 200 vehículos...
+2025-11-27 22:59:23,261 - ERROR -  Error durante la generación: tuple index out of range
+2025-11-27 22:59:23,262 - INFO - 
+ Conexión cerrada
+2025-11-27 23:01:17,046 - INFO -  Conexión exitosa a PostgreSQL
+2025-11-27 23:01:17,046 - INFO - Generando 200 vehículos...
+2025-11-27 23:01:17,054 - ERROR -  Error durante la generación: tuple index out of range
+2025-11-27 23:01:17,055 - INFO - 
+ Conexión cerrada
+2025-11-27 23:08:04,974 - INFO -  Conexión exitosa a PostgreSQL
+2025-11-27 23:08:04,974 - INFO - Generando 200 vehículos...
+2025-11-27 23:08:05,020 - INFO -  200 vehículos insertados
+2025-11-27 23:08:05,020 - INFO - Generando 400 conductores...
+2025-11-27 23:08:05,139 - INFO -  400 conductores insertados
+2025-11-27 23:08:05,140 - INFO - Generando 50 rutas...
+2025-11-27 23:08:05,147 - INFO -  50 rutas insertadas
+2025-11-27 23:08:05,147 - INFO - Generando 100000 viajes...
+2025-11-27 23:08:09,585 - INFO -   Progreso: 0/100000 trips insertados
+2025-11-27 23:08:10,345 - INFO -   Progreso: 10000/100000 trips insertados
+2025-11-27 23:08:11,261 - INFO -   Progreso: 20000/100000 trips insertados
+2025-11-27 23:08:12,231 - INFO -   Progreso: 30000/100000 trips insertados
+2025-11-27 23:08:13,067 - INFO -   Progreso: 40000/100000 trips insertados
+2025-11-27 23:08:13,798 - INFO -   Progreso: 50000/100000 trips insertados
+2025-11-27 23:08:14,539 - INFO -   Progreso: 60000/100000 trips insertados
+2025-11-27 23:08:15,256 - INFO -   Progreso: 70000/100000 trips insertados
+2025-11-27 23:08:16,000 - INFO -   Progreso: 80000/100000 trips insertados
+2025-11-27 23:08:16,767 - INFO -   Progreso: 90000/100000 trips insertados
+2025-11-27 23:08:17,404 - INFO -  100000 viajes insertados
+2025-11-27 23:08:17,413 - INFO - Generando 400000 entregas...
+2025-11-27 23:09:20,560 - ERROR -  Error durante la generación: no existe la relación «deliveries»
+LINE 2:             INSERT INTO deliveries (trip_id, tracking_number...
+                                ^
+
+2025-11-27 23:09:20,655 - INFO - 
+ Conexión cerrada
+2025-11-27 23:10:36,356 - INFO -  Conexión exitosa a PostgreSQL
+2025-11-27 23:10:36,356 - INFO - Generando 200 vehículos...
+2025-11-27 23:10:36,374 - ERROR -  Error durante la generación: llave duplicada viola restricción de unicidad «vehicles_license_plate_key»
+DETAIL:  Ya existe la llave (license_plate)=(UDA125).
+
+2025-11-27 23:10:36,374 - INFO - 
+ Conexión cerrada
+2025-11-27 23:12:20,459 - INFO -  Conexión exitosa a PostgreSQL
+2025-11-27 23:12:20,460 - INFO - Generando 5000 registros de mantenimiento...
+2025-11-27 23:12:21,212 - INFO -  4920 mantenimientos insertados
+2025-11-27 23:12:21,215 - INFO - 
+ RESUMEN DE GENERACIÓN DE DATOS
+2025-11-27 23:12:21,215 - INFO - ==================================================
+2025-11-27 23:12:21,217 - ERROR -  Error durante la generación: no existe la relación «vehicles»
+LINE 1: SELECT COUNT(*) FROM vehicles
+                             ^
+
+2025-11-27 23:12:21,217 - INFO - 
+ Conexión cerrada
+2025-11-27 23:15:07,721 - INFO -  Conexión exitosa a PostgreSQL
+2025-11-27 23:15:07,747 - INFO - Generando 5000 registros de mantenimiento...
+2025-11-27 23:15:08,468 - INFO -  4920 mantenimientos insertados
+2025-11-27 23:15:08,469 - INFO - 
+ RESUMEN DE GENERACIÓN DE DATOS
+2025-11-27 23:15:08,470 - INFO - ==================================================
+2025-11-27 23:15:08,471 - ERROR -  Error durante la generación: no existe la relación «vehicles»
+LINE 1: SELECT COUNT(*) FROM vehicles
+                             ^
+
+2025-11-27 23:15:08,472 - INFO - 
+ Conexión cerrada
+2025-11-27 23:17:47,212 - INFO -  Conexión exitosa a PostgreSQL
+2025-11-27 23:17:47,215 - INFO - Generando 200 vehículos...
+2025-11-27 23:17:47,238 - ERROR -  Error durante la generación: llave duplicada viola restricción de unicidad «vehicles_license_plate_key»
+DETAIL:  Ya existe la llave (license_plate)=(UDA125).
+
+2025-11-27 23:17:47,243 - INFO - 
+ Conexión cerrada
+2025-11-27 23:18:52,577 - INFO -  Conexión exitosa a PostgreSQL
+2025-11-27 23:18:52,580 - INFO - Generando 400000 entregas...
+2025-11-27 23:19:54,882 - ERROR -  Error durante la generación: no existe el esquema «np»
+LINE 5: ... 'María Marcela Torres', 'Cr. 119R # 20-4, Cali', np.float64...
+                                                             ^
+
+2025-11-27 23:19:54,986 - INFO - 
+ Conexión cerrada
+2025-11-27 23:21:59,609 - INFO -  Conexión exitosa a PostgreSQL
+2025-11-27 23:21:59,610 - INFO - Generando 400000 entregas...
+2025-11-27 23:23:02,806 - ERROR -  Error durante la generación: no existe el esquema «np»
+LINE 5: ... 'María Marcela Torres', 'Cr. 119R # 20-4, Cali', np.float64...
+                                                             ^
+
+2025-11-27 23:23:02,906 - INFO - 
+ Conexión cerrada
+2025-11-27 23:26:24,958 - INFO -  Conexión exitosa a PostgreSQL
+2025-11-27 23:26:24,959 - INFO - Generando 400000 entregas...
+2025-11-27 23:27:28,866 - INFO -   Progreso: 0/399924 deliveries insertados
+2025-11-27 23:27:33,193 - INFO -   Progreso: 50000/399924 deliveries insertados
+2025-11-27 23:27:37,503 - INFO -   Progreso: 100000/399924 deliveries insertados
+2025-11-27 23:27:41,886 - INFO -   Progreso: 150000/399924 deliveries insertados
+2025-11-27 23:27:46,163 - INFO -   Progreso: 200000/399924 deliveries insertados
+2025-11-27 23:27:50,421 - INFO -   Progreso: 250000/399924 deliveries insertados
+2025-11-27 23:27:54,915 - INFO -   Progreso: 300000/399924 deliveries insertados
+2025-11-27 23:27:59,599 - INFO -   Progreso: 350000/399924 deliveries insertados
+2025-11-27 23:28:03,562 - INFO -  399924 entregas insertadas
+2025-11-27 23:28:03,665 - INFO - Generando 5000 registros de mantenimiento...
+2025-11-27 23:28:04,433 - INFO -  4920 mantenimientos insertados
+2025-11-27 23:28:04,434 - INFO - 
+ RESUMEN DE GENERACIÓN DE DATOS
+2025-11-27 23:28:04,434 - INFO - ==================================================
+2025-11-27 23:28:04,442 - ERROR -  Error durante la generación: no existe la relación «vehicles»
+LINE 1: SELECT COUNT(*) FROM vehicles
+                             ^
+
+2025-11-27 23:28:04,443 - INFO - 
+ Conexión cerrada
+2025-11-27 23:30:08,347 - INFO -  Conexión exitosa a PostgreSQL
+2025-11-27 23:30:08,348 - INFO - Generando 400000 entregas...
+2025-11-27 23:31:25,646 - ERROR -  Error durante la generación: llave duplicada viola restricción de unicidad «deliveries_tracking_number_key»
+DETAIL:  Ya existe la llave (tracking_number)=(FL202500000001).
+
+2025-11-27 23:31:25,752 - INFO - 
+ Conexión cerrada
+2025-11-27 23:31:43,658 - INFO -  Conexión exitosa a PostgreSQL
+2025-11-27 23:31:43,658 - INFO - Generando 5000 registros de mantenimiento...
+2025-11-27 23:31:44,406 - INFO -  4920 mantenimientos insertados
+2025-11-27 23:31:44,407 - INFO - 
+ RESUMEN DE GENERACIÓN DE DATOS
+2025-11-27 23:31:44,407 - INFO - ==================================================
+2025-11-27 23:31:44,408 - INFO -   resources.vehicles: 200 registros
+2025-11-27 23:31:44,411 - INFO -   persons.drivers: 400 registros
+2025-11-27 23:31:44,412 - INFO -   resources.routes: 48 registros
+2025-11-27 23:31:44,417 - INFO -   resources.trips: 100,000 registros
+2025-11-27 23:31:44,501 - INFO -   resources.deliveries: 399,924 registros
+2025-11-27 23:31:44,504 - INFO -   resources.maintenance: 19,680 registros
+2025-11-27 23:31:44,504 - INFO - 
+  TOTAL: 520,252 registros
+2025-11-27 23:31:44,631 - INFO - 
+  Entregas por viaje: AVG=4.0, MIN=2, MAX=6
+2025-11-27 23:31:44,631 - INFO - 
+ VALIDANDO CALIDAD DE DATOS...
+2025-11-27 23:31:44,641 - INFO -    Integridad referencial - Trips sin vehículo válido: OK
+2025-11-27 23:31:44,749 - INFO -    Integridad referencial - Deliveries sin trip válido: OK
+2025-11-27 23:31:44,756 - INFO -    Consistencia temporal - Trips con arrival < departure: OK
+2025-11-27 23:31:44,777 - INFO -    Consistencia de peso - Trips excediendo capacidad: OK
+2025-11-27 23:31:44,780 - INFO -    Entregas sin tracking number: OK
+2025-11-27 23:31:44,781 - INFO - 
+ Resumen guardado en generation_summary.json
+2025-11-27 23:31:44,783 - INFO - 
+ Conexión cerrada

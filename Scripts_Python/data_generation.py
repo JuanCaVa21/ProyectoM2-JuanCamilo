@@ -107,7 +107,7 @@ class DataGenerator:
         query = """
             insert into resources.vehicles (license_plate, vehicle_type,
                                             capacity_kg, fuel_type, acquisition_date, status)
-            values (%s, %s, %s, %s, %s, %s, %s, %s)
+            values (%s, %s, %s, %s, %s, %s)
         """
         
         execute_batch(self.cursor, query, vehicles, page_size=100)
@@ -379,7 +379,7 @@ class DataGenerator:
                 tracking_number = f"FL{datetime.now().year}{str(delivery_counter+1).zfill(8)}"
                 customer_name = fake.name()
                 delivery_address = f"{fake.street_address()}, {city}"
-                package_weight = weights[i]
+                package_weight = float(weights[i]) # Se intenta arreglar np.float
                 
                 # Horario programado y real
                 scheduled = departure + timedelta(hours=time_per_delivery * (i + 0.5))
@@ -420,10 +420,10 @@ class DataGenerator:
         
         # Insertar en batches
         query = """
-            INSERT INTO deliveries (trip_id, tracking_number, customer_name,
+            insert into resources.deliveries (trip_id, tracking_number, customer_name,
                                   delivery_address, package_weight_kg, scheduled_datetime,
                                   delivered_datetime, delivery_status, recipient_signature)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            values (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         
         batch_size = 1000
@@ -580,11 +580,11 @@ class DataGenerator:
         logging.info("="*50)
         
         # Conteos finales
-        tables = ['vehicles', 'drivers', 'routes', 'trips', 'deliveries', 'maintenance']
+        tables = ['resources.vehicles', 'persons.drivers', 'resources.routes', 'resources.trips', 'resources.deliveries', 'resources.maintenance']
         total_records = 0
         
         for table in tables:
-            self.cursor.execute(f"SELECT COUNT(*) FROM {table}")
+            self.cursor.execute(f"select count(*) from {table}")
             count = self.cursor.fetchone()[0]
             logging.info(f"  {table}: {count:,} registros")
             total_records += count
