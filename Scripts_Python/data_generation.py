@@ -453,16 +453,39 @@ class DataGenerator:
         logging.info(f"Generando {count} registros de mantenimiento...")
         
         # Obtener información de vehículos y sus viajes
+        # Se modifico la consulta, ya que no estabamos obteniendo el primer y ultimo valor
+        # Para poder usar la funcion FIRST_VALUES() se creo la funcion de ventana
+        # Creamos una subconsulta trip_windows ya que tenemos funciones de ventana
         self.cursor.execute("""
-            select 
-	            v.vehicle_id,
-	            v.vehicle_type, 
-	            count(t.trip_id) as trip_count,
-	            min(t.departure_datetime) as first_trip,
-	            max(t.arrival_datetime) as last_trip
-            from resources.vehicles v 
-            inner join resources.trips t on v.vehicle_id = t.vehicle_id
-            group by v.vehicle_id 
+            WITH trip_windows AS (
+                SELECT 
+                    v.vehicle_id,
+                    v.vehicle_type,
+                    t.trip_id,
+                    t.departure_datetime,
+                    t.arrival_datetime,
+                    COUNT(t.trip_id) OVER (PARTITION BY v.vehicle_id) AS trip_count, 
+                FIRST_VALUE(t.departure_datetime) OVER (
+                    PARTITION BY v.vehicle_id
+                    ORDER BY t.departure_datetime ASC
+                ) AS first_trip,
+                LAST_VALUE(t.arrival_datetime) OVER (
+                    PARTITION BY v.vehicle_id
+                    ORDER BY t.arrival_datetime DESC
+                ) AS last_trip
+                FROM resources.vehicles v
+                INNER JOIN resources.trips t 
+                ON v.vehicle_id = t.vehicle_id
+            )
+
+            SELECT DISTINCT
+                vehicle_id,
+                vehicle_type,
+                trip_count,
+                first_trip,
+                last_trip
+            FROM trip_windows
+            ORDER BY vehicle_id;
         """)
         vehicle_stats = self.cursor.fetchall()
         

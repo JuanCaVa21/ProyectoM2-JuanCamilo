@@ -144,3 +144,30 @@ DETAIL:  Ya existe la llave (tracking_number)=(FL202500000001).
  Resumen guardado en generation_summary.json
 2025-11-27 23:31:44,783 - INFO - 
  Conexión cerrada
+2025-11-28 00:02:25,435 - INFO -  Conexión exitosa a PostgreSQL
+2025-11-28 00:02:25,436 - INFO - Generando 5000 registros de mantenimiento...
+2025-11-28 00:02:26,704 - INFO -  5000 mantenimientos insertados
+2025-11-28 00:02:26,714 - INFO - 
+ RESUMEN DE GENERACIÓN DE DATOS
+2025-11-28 00:02:26,715 - INFO - ==================================================
+2025-11-28 00:02:26,716 - INFO -   resources.vehicles: 200 registros
+2025-11-28 00:02:26,722 - INFO -   persons.drivers: 400 registros
+2025-11-28 00:02:26,726 - INFO -   resources.routes: 48 registros
+2025-11-28 00:02:26,732 - INFO -   resources.trips: 100,000 registros
+2025-11-28 00:02:26,845 - INFO -   resources.deliveries: 399,924 registros
+2025-11-28 00:02:26,858 - INFO -   resources.maintenance: 24,680 registros
+2025-11-28 00:02:26,858 - INFO - 
+  TOTAL: 525,252 registros
+2025-11-28 00:02:27,167 - INFO - 
+  Entregas por viaje: AVG=4.0, MIN=2, MAX=6
+2025-11-28 00:02:27,168 - INFO - 
+ VALIDANDO CALIDAD DE DATOS...
+2025-11-28 00:02:27,179 - INFO -    Integridad referencial - Trips sin vehículo válido: OK
+2025-11-28 00:02:27,276 - INFO -    Integridad referencial - Deliveries sin trip válido: OK
+2025-11-28 00:02:27,283 - INFO -    Consistencia temporal - Trips con arrival < departure: OK
+2025-11-28 00:02:27,311 - INFO -    Consistencia de peso - Trips excediendo capacidad: OK
+2025-11-28 00:02:27,313 - INFO -    Entregas sin tracking number: OK
+2025-11-28 00:02:27,313 - INFO - 
+ Resumen guardado en generation_summary.json
+2025-11-28 00:02:27,314 - INFO - 
+ Conexión cerrada
