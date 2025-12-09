@@ -17,7 +17,7 @@ from resources.vehicles v
 group by v.vehicle_type;
 ```
 #### Resultado: 
-![alt text](Pictures\Resultado_Query_1.png)
+![alt text](../Pictures/Resultado_Query_1.png)
 #### Exucution Time Explain Analyze 
 * Sin index: 0,286 ms
 * Con index: 11,560 ms
@@ -37,7 +37,7 @@ where (d.license_expiry between current_timestamp and (current_timestamp + '30 d
 order by d.license_expiry;
 ```
 #### Resultado:
-![alt text](Pictures\Resultado_Query_2.png)
+![alt text](../Pictures/Resultado_Query_2.png)
 #### Exucution Time Explain Analyze 
 * Sin index: 0,257 ms
 * Con index: 0,133 ms
@@ -56,7 +56,7 @@ join resources.routes r on r.route_id = t.route_id
 group by r.destination_city, t.status;
 ```
 #### Resultado:
-![alt text](Pictures\Resultado_Query_3.png)
+![alt text](../Pictures\Resultado_Query_3.png)
 #### Exucution Time Explain Analyze
 * Sin index: 40,827 ms
 * Con index: 43,775 ms
@@ -77,7 +77,7 @@ order by viajes desc;
 
 ```
 #### Resultado:
-![alt text](Pictures\Resultado_Query_4.png)
+![alt text](../Pictures\Resultado_Query_4.png)
 #### Exucution Time Explain Analyze
 * Sin index: 136,532 ms
 * Con index: 145,225 ms
@@ -98,7 +98,7 @@ group by Nombre
 order by Viajes desc;
 ```
 #### Resultado:
-![alt text](Pictures\Resultado_Query_5.png)
+![alt text](../Pictures\Resultado_Query_5.png)
 #### Exucution Time Explain Analyze
 * Sin index: 65,450 ms
 * Con index: 51,240 ms
@@ -123,7 +123,7 @@ group by nombre
 order by promedio_entregas desc;
 ```
 #### Resultado:
-![alt text](Pictures\Resultado_Query_6.png)
+![alt text](../Pictures\Resultado_Query_6.png)
 #### Exucution Time Explain Analyze
 * Sin index: 165,516 ms
 * Con index: 153,575 ms
@@ -148,7 +148,7 @@ order by consumo_en_100km desc
 limit 10;
 ```
 #### Resultado:
-![alt text](Pictures\Resultado_Query_7.png)
+![alt text](../Pictures\Resultado_Query_7.png)
 #### Exucution Time Explain Analyze
 * Sin index: 79,506 ms
 * Con index: 66,824 ms
@@ -179,7 +179,7 @@ from retrasos r
 group by dia_semana; 
 ```
 #### Resultado:
-![alt text](Pictures\Resultado_Query_8.png)
+![alt text](../Pictures\Resultado_Query_8.png)
 #### Exucution Time Explain Analyze
 * Sin index: 284,902 ms
 * Con index: 213,004 ms
@@ -211,7 +211,7 @@ select
 from costos_mantenimiento;
 ```
 #### Resultado:
-![alt text](Pictures\Resultado_Query_9.png)
+![alt text](../Pictures\Resultado_Query_9.png)
 #### Exucution Time Explain Analyze
 * Sin index: 4520,274 ms
 * Con index: 2651,834 ms
@@ -280,7 +280,7 @@ order by ranking_total asc
 limit 20;
 ```
 #### Resultado:
-![alt text](Pictures\Resultado_Query_10.png)
+![alt text](../Pictures\Resultado_Query_10.png)
 #### Exucution Time Explain Analyze
 * Sin index: 1895,638 ms
 * Con index: 618,555 ms
@@ -323,7 +323,47 @@ from month_metrics
 order by mes asc;
 ```
 #### Resultado:
-![alt text](Pictures\Resultado_Query_11.png)
+![alt text](../Pictures\Resultado_Query_11.png)
 #### Exucution Time Explain Analyze
 * Sin index: 359,862 ms
 * Con index: 212,949 ms
+
+## Creacion y Explicacion de los Index
+
+### Index 1
+Este indice afectara a las listas donde se llame trips 
+```sql
+create index idx_trips_composite_joins on resources.trips(vehicle_id, driver_id, route_id, departure_datetime)
+where status = 'completed';
+```
+
+### Index 2
+
+```sql
+create index idx_deliveries_scheduled_datetime on resources.deliveries(scheduled_datetime, delivery_status)
+where delivery_status = 'delivered';
+```
+
+
+### Index 3
+
+```sql
+create index idx_maintenance_vehicle_cost on resources.maintenance(vehicle_id, cost);
+```
+
+
+
+### Index 4
+
+```sql
+create index idx_drivers_status_license on persons.drivers(status, license_expiry)
+where status = 'active';
+```
+
+
+### Index 5
+
+```sql
+create index idx_routes_metrics on resources.routes(route_id, distance_km, destination_city);
+```
+

@@ -14,6 +14,8 @@ import schedule
 import time
 import json
 from typing import Dict, List, Tuple
+import os
+from dotenv import load_dotenv
 
 # Configuración de logging
 logging.basicConfig(
@@ -34,14 +36,15 @@ POSTGRES_CONFIG = {
     'port': 5432
 }
 
-SNOWFLAKE_CONFIG = {
-    'user': 'JUANCAVA21',
-    'password': 'password',
-    'account': 'account',
-    'warehouse': 'FLEETLOGIX_WH',
-    'database': 'FLEETLOGIX_DW',
-    'schema': 'ANALYTICS'
-}
+# Cargamos las credenciales
+load_dotenv('credenciales.env')
+
+user = os.getenv('user')
+password = os.getenv('password')
+account = os.getenv('account')
+warehouse = os.getenv('warehouse')
+database = os.getenv('database')
+schema = os.getenv('schema') 
 
 class FleetLogixETL:
     def __init__(self):
@@ -63,7 +66,14 @@ class FleetLogixETL:
             logging.info(" Conectado a PostgreSQL")
             
             # Snowflake
-            self.sf_conn = snowflake.connector.connect(**SNOWFLAKE_CONFIG)
+            self.sf_conn = snowflake.connector.connect(
+                user=user,
+                password=password,
+                account=account,
+                warehouse=warehouse,
+                database=database,
+                schema=schema
+            )
             logging.info(" Conectado a Snowflake")
             
             return True
@@ -76,7 +86,37 @@ class FleetLogixETL:
         logging.info(" Iniciando extracción de datos...")
         
         query = """
-        #TO DO#
+        select
+            t2.vehicle_id,
+            t2.driver_id,
+            t2.route_id,
+            t1.delivery_id,
+            t1.trip_id,
+            t1.tracking_number,
+            t1.package_weight_kg,
+            t4.distance_km,
+            t2.fuel_consumed_liters,
+            t1.delivered_datetime,
+            t1.delivery_status,
+            t1.scheduled_datetime,
+            t2.departure_datetime,
+            t4.estimated_duration_hours,
+            t4.toll_cost,
+            t1.recipient_signature,
+            t2.arrival_datetime,
+            t1.customer_name,
+            t4.destination_city,
+            t5.license_plate
+        from resources.deliveries t1
+        join resources.trips t2
+            on t1.trip_id = t2.trip_id
+        join persons.drivers t3
+            on t2.driver_id = t3.driver_id
+        join resources.routes t4 
+            on t2.route_id = t4.route_id
+        join resources.vehicles t5 
+            on t2.vehicle_id = t5.vehicle_id
+        where t1.delivered_datetime >= (current_timestamp - interval '1 day') and t1.delivered_datetime < current_timestamp;
         """
         
         try:
@@ -167,12 +207,22 @@ class FleetLogixETL:
             for _, row in customers.iterrows():
                 cursor.execute("""
                     MERGE INTO dim_customer c
-                    USING (SELECT %s as customer_name) s
+                    USING 
+                        (SELECT %s as customer_name) s
                     ON c.customer_name = s.customer_name
                     WHEN NOT MATCHED THEN
-                        INSERT (customer_name, customer_type, city, first_delivery_date, 
-                               total_deliveries, customer_category)
-                        VALUES (%s, 'Individual', %s, CURRENT_DATE(), 0, 'Regular')
+                        INSERT (customer_name, 
+                               customer_type, 
+                               city, 
+                               first_delivery_date, 
+                               total_deliveries, 
+                               customer_category)
+                        VALUES (%s, 
+                               'Individual', 
+                               %s, 
+                               CURRENT_DATE(), 
+                               0, 
+                               'Regular')
                 """, (row['customer_name'], row['customer_name'], 
                      df[df['customer_name'] == row['customer_name']]['destination_city'].iloc[0]))
             
@@ -182,7 +232,8 @@ class FleetLogixETL:
                 UPDATE dim_driver 
                 SET valid_to = CURRENT_DATE() - 1, is_current = FALSE
                 WHERE driver_id IN (
-                    SELECT DISTINCT driver_id 
+                    SELECT 
+                        DISTINCT driver_id 
                     FROM staging_daily_load
                 ) AND is_current = TRUE
             """)
@@ -240,13 +291,29 @@ class FleetLogixETL:
             # Insertar en batch
             cursor.executemany("""
                 INSERT INTO fact_deliveries (
-                    date_key, scheduled_time_key, delivered_time_key,
-                    vehicle_key, driver_key, route_key, customer_key,
-                    delivery_id, trip_id, tracking_number,
-                    package_weight_kg, distance_km, fuel_consumed_liters,
-                    delivery_time_minutes, delay_minutes, deliveries_per_hour,
-                    fuel_efficiency_km_per_liter, cost_per_delivery, revenue_per_delivery,
-                    is_on_time, is_damaged, has_signature, delivery_status,
+                    date_key, 
+                    scheduled_time_key, 
+                    delivered_time_key,
+                    vehicle_key, 
+                    driver_key, 
+                    route_key, 
+                    customer_key,
+                    delivery_id, 
+                    trip_id, 
+                    tracking_number,
+                    package_weight_kg, 
+                    distance_km, 
+                    fuel_consumed_liters,
+                    delivery_time_minutes, 
+                    delay_minutes, 
+                    deliveries_per_hour,
+                    fuel_efficiency_km_per_liter, 
+                    cost_per_delivery, 
+                    revenue_per_delivery,
+                    is_on_time, 
+                    is_damaged, 
+                    has_signature, 
+                    delivery_status,
                     etl_batch_id
                 ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
             """, fact_data)
@@ -301,12 +368,70 @@ class FleetLogixETL:
         try:
             # Crear tabla de totales si no existe
             cursor.execute("""
-                #TO DO#
+                CREATE TABLE IF NOT EXISTS daily_totals(
+                    date_update DATE,
+                    etl_batch_id VARCHAR,
+                    total_deliveries NUMBER,
+                    total_vehicles NUMBER,
+                    total_drivers NUMBER,
+                    total_routes NUMBER,
+                    total_customers NUMBER,
+                    total_package_weight_kg DECIMAL(10,2),
+                    total_distance_km DECIMAL(10,2),
+                    total_fuel_consumed_liters DECIMAL(10,2),
+                    avg_delivery_time_minutes INT,
+                    avg_delay_minutes INT,
+                    avg_deliveries_per_hour DECIMAL(5,2),
+                    avg_fuel_efficiency_km_per_liter DECIMAL(5,2),
+                    total_cost_per_delivery DECIMAL(10,2),
+                    total_revenue_per_delivery DECIMAL(10,2),
+                    on_time_porcentaje DECIMAL(10,2),
+                    delivery_status_porcentaje DECIMAL(10,2),
+                    is_damage_porcentaje DECIMAL(10,2)
+                );
             """)
             
             # Insertar totales del día
             cursor.execute("""
-                #TO DO#
+                INSERT INTO daily_totals(
+                    date_update,
+                    etl_batch_id,
+                    total_deliveries,
+                    total_vehicles,
+                    total_drivers,
+                    total_routes,
+                    total_customers,
+                    total_package_weight_kg,
+                    total_distance_km,
+                    total_fuel_consumed_liters,
+                    avg_delivery_time_minutes,
+                    avg_delay_minutes,
+                    avg_deliveries_per_hour,
+                    avg_fuel_efficiency_km_per_liter,
+                    total_cost_per_delivery,
+                    total_revenue_per_delivery,
+                    on_time_porcentaje
+                )
+                SELECT
+                    CURRENT_DATE AS date_update,
+                    %s AS etl_batch_id,
+                    COUNT(delivery_key) AS total_deliveries,
+                    COUNT(vehicle_key) AS total_vehicles,
+                    COUNT(driver_key) AS total_drivers,
+                    COUNT(route_key) AS total_routes,
+                    COUNT(customer_key) AS total_customers,
+                    SUM(package_weight_kg) AS total_package_weight_kg,
+                    SUM(distance_km) AS total_distance_km,
+                    SUM(fuel_consumed_liters) AS total_fuel_consumed_liters,
+                    AVG(delivery_time_minutes) AS avg_delivery_time_minutes,
+                    AVG(delay_minutes) AS avg_delay_minutes,
+                    AVG(deliveries_per_hour) AS avg_deliveries_per_hour,
+                    AVG(fuel_efficiency_km_per_liter) AS avg_fuel_efficiency_km_per_liter,
+                    SUM(cost_per_delivery) AS total_cost_per_delivery,
+                    SUM(revenue_per_delivery) AS total_revenue_per_delivery,
+                    AVG(CASE WHEN is_on_time THEN 1 ELSE 0 END) * 100 AS on_time_porcentaje
+                FROM fact_deliveries
+                WHERE date_key = TO_VARCHAR(CURRENT_DATE, 'YYYYMMDD');
             """, (self.batch_id,))
             
             self.sf_conn.commit()

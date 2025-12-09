@@ -48,8 +48,6 @@ Durante la instalación:
 
 - Abre Dbeaver y genera una nueva conexion con Ctrl + Shift + N
 - Configura la conexion con PostgresSQL 
-- La configuracion se ve asi:
-![alt text](Pictures\image-1.png)
 - Deja la configuracion de host igual
 - Coloca tu contraseña y listo
 - Crea un nuevo script SQL y ejecuta:
@@ -75,7 +73,7 @@ CREATE SCHEMA Resources AUTHORIZATION pg_database_owner;
   - deliveries
   - maintenance
 
-![alt text](Pictures\Diagrama_ER_Profesional.png)
+En la carpeta de Pictures exisite un archivo llamado Diagrama_ER_Profesional el cual se corrio en Mermaid alli esta la estructura de las tablas
 
 ### 4. Instalar dependencias
 ```bash
