@@ -1,5 +1,10 @@
 # Proyecto M2 - Generación de Datos Sintéticos con Python y PostgreSQL
 
+Para mas facilidad al corrector de este proyecto te dejo mi GitHub, donde esta absolutamente todo de una manera mas organizada
+Github_JuanCaVa21: https://github.com/JuanCaVa21/ProyectoM2-JuanCamilo
+
+Si necesitas las contraseñas el archivo .env esta en el drive
+
 En el primer avance se generan más de **500.000 registros simulados** para poblar una base de datos PostgreSQL y simular la base de datos de la empresa de transporte FleetLogix.
 
 FleetLogix es una empresa de transporte y logística que opera una flota de 200 vehículos realizando entregas de última milla en 5 ciudades principales. La empresa ha estado operando con sistemas legacy y hojas de cálculo, pero necesita modernizar su infraestructura de datos para competir en el mercado actual.
@@ -48,8 +53,6 @@ Durante la instalación:
 
 - Abre Dbeaver y genera una nueva conexion con Ctrl + Shift + N
 - Configura la conexion con PostgresSQL 
-- La configuracion se ve asi:
-![alt text](Pictures\image-1.png)
 - Deja la configuracion de host igual
 - Coloca tu contraseña y listo
 - Crea un nuevo script SQL y ejecuta:
@@ -75,7 +78,7 @@ CREATE SCHEMA Resources AUTHORIZATION pg_database_owner;
   - deliveries
   - maintenance
 
-![alt text](Pictures\Diagrama_ER_Profesional.png)
+En la carpeta de Pictures exisite un archivo llamado Diagrama_ER_Profesional el cual se corrio en Mermaid alli esta la estructura de las tablas
 
 ### 4. Instalar dependencias
 ```bash

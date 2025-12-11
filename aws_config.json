@@ -1,0 +1,13 @@
+{
+  "rds_instance": "fleetlogix-db",
+  "s3_bucket": "fleetlogix-data",
+  "dynamodb_tables": [
+    "deliveries_status",
+    "vehicle_tracking",
+    "routes_waypoints",
+    "alerts_history"
+  ],
+  "lambda_role_arn": "arn:aws:iam::238132676360:role/FleetLogixLambdaRole",
+  "region": "us-east-1",
+  "timestamp": "2025-12-09T16:36:15.312960"
+}
