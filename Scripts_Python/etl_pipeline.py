@@ -32,7 +32,7 @@ POSTGRES_CONFIG = {
     'host': 'localhost',
     'database': 'fleetlogix_database',
     'user': 'postgres',
-    'password': 'password',
+    'password': 'Telesforo123',
     'port': 5432
 }
 
@@ -86,7 +86,7 @@ class FleetLogixETL:
         logging.info(" Iniciando extracción de datos...")
         
         query = """
-        select
+        select 
             t2.vehicle_id,
             t2.driver_id,
             t2.route_id,
@@ -116,7 +116,14 @@ class FleetLogixETL:
             on t2.route_id = t4.route_id
         join resources.vehicles t5 
             on t2.vehicle_id = t5.vehicle_id
-        where t1.delivered_datetime >= (current_timestamp - interval '1 day') and t1.delivered_datetime < current_timestamp;
+        where t1.delivered_datetime >= (
+                select max(delivered_datetime) - interval '1 day'
+                from resources.deliveries
+            )
+        and t1.delivered_datetime < (
+                select max(delivered_datetime)
+                from resources.deliveries
+            );
         """
         
         try:
@@ -182,7 +189,7 @@ class FleetLogixETL:
             
             # Manejar cambios históricos (SCD Type 2 para conductor/vehículo)
             df['valid_from'] = pd.to_datetime(df['scheduled_datetime']).dt.date
-            df['valid_to'] = pd.to_datetime('9999-12-31')
+            df['valid_to'] = pd.to_datetime('2262-04-11')
             df['is_current'] = True
             
             self.metrics['records_transformed'] = len(df)
@@ -203,8 +210,8 @@ class FleetLogixETL:
         
         try:
             # Cargar dim_customer (nuevos clientes)
-            customers = df[['customer_name']].drop_duplicates()
-            for _, row in customers.iterrows():
+            df_customer = df[["customer_name"]].drop_duplicates()
+            for _, row in df_customer.iterrows():
                 cursor.execute("""
                     MERGE INTO dim_customer c
                     USING 
@@ -219,25 +226,39 @@ class FleetLogixETL:
                                customer_category)
                         VALUES (%s, 
                                'Individual', 
-                               %s, 
-                               CURRENT_DATE(), 
                                0, 
+                               CURRENT_DATE(), 
+                               %s, 
                                'Regular')
                 """, (row['customer_name'], row['customer_name'], 
                      df[df['customer_name'] == row['customer_name']]['destination_city'].iloc[0]))
             
             # Actualizar dimensiones SCD Type 2 si hay cambios
             # (Ejemplo simplificado para dim_driver)
-            cursor.execute("""
-                UPDATE dim_driver 
-                SET valid_to = CURRENT_DATE() - 1, is_current = FALSE
-                WHERE driver_id IN (
-                    SELECT 
-                        DISTINCT driver_id 
-                    FROM staging_daily_load
-                ) AND is_current = TRUE
-            """)
-            
+            df_driver = df[["driver_id"]].drop_duplicates()
+            for _, row in df_driver.iterrows():
+                cursor.execute("""
+                    MERGE INTO dim_driver d
+                    USING 
+                        (SELECT %s as driver_id) s
+                    ON d.driver_id = s.driver_id
+                    WHEN NOT MATCHED THEN
+                        INSERT (driver_id, 
+                               experience_months, 
+                               full_name, 
+                               hire_date,
+                               employee_code, 
+                               is_current, 
+                               license_expiry,
+                               license_number,
+                               performance_category,
+                               phone,
+                               status,
+                               valid_from,
+                               valid_to)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 'Active', %s, %s)
+                """)
+
             self.sf_conn.commit()
             logging.info(" Dimensiones actualizadas")
             
@@ -296,7 +317,7 @@ class FleetLogixETL:
                     delivered_time_key,
                     vehicle_key, 
                     driver_key, 
-                    route_key, 
+                    route_key,
                     customer_key,
                     delivery_id, 
                     trip_id, 

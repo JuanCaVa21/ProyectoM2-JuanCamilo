@@ -100,7 +100,7 @@ CREATE OR REPLACE TABLE dim_route (
 
 -- Dimensión Cliente
 CREATE OR REPLACE TABLE dim_customer (
-    customer_key INT PRIMARY KEY,
+    customer_key NUMBER AUTOINCREMENT PRIMARY KEY,
     customer_id INT IDENTITY,
     customer_name VARCHAR(200),
     customer_type VARCHAR(50),    -- 'Individual', 'Empresa', 'Gobierno'
