@@ -1,4 +1,4 @@
-# Proyecto M2 - Generación de Datos Sintéticos con Python y PostgreSQL
+# Generación de Datos Sintéticos con Python y PostgreSQL
 
 En el primer avance se generan más de **500.000 registros simulados** para poblar una base de datos PostgreSQL y simular la base de datos de la empresa de transporte FleetLogix.
 
